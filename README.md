@@ -2,7 +2,7 @@
 
 Diabetic Retinopathy Detection using PatchCNN Networks.
 
-## CHIPathyDB - The Largest Retinopathy Detection Detection
+## CHIPathyDB - The Retinopathy Detection Database
 
 ### Steps to Re-produce the Train/Test Dataset
 > Since the available data is highly limited and contains segmentation masks, we convert those to bounding boxes for detection and localization.
