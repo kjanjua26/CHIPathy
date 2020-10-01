@@ -78,3 +78,5 @@ if __name__ == "__main__":
 
         if count:
             out.write(os.path.abspath(img) + '\n')
+        else:
+            os.remove(os.path.join(dst, os.path.splitext(os.path.basename(img))[0] + '.txt'))
