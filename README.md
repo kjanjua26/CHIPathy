@@ -13,4 +13,5 @@ Diabetic Retinopathy Detection using PatchCNN Networks.
     
 2. Pre-processed image using Gray Scale Cropping and Weighted Gaussian Blur. To reproduce the results, run ```dataprep/preprocess_cropnblur.py``` file.
 3. Divide the masks and images into patches of size 64x64, run ```dataprep/patches.py``` to get the results.
-4. Convert the segmentation masks to bounding boxes and prepare the dataset for EfficientDet. To obtain the results run ```dataprep/masks2boxes_patches.py``` file.
+4. Convert the segmentation masks to bounding boxes. To obtain the results run ```dataprep/masks2boxes.py``` file.
+5. Convert these bounding boxes to different formats as required by the model using specific conversion scripts. e.g., for YOLO use ```dataprep/prepdata_yolo.py``` file. 
