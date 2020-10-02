@@ -48,13 +48,26 @@ class SyntheticGenerator:
         patch = img[y1: y2, x1: x2]
         return patch
     
-    def apply_patch_on_the_image(img, patch, offset=150):
+    def apply_patch_on_the_image(img, patch, count=5, offset=150):
         """
         Applies the patch on the main image and returns the mask and bounding box as well.
         """
-        x_offset = y_offset = offset
-        img[y_offset:y_offset+patch.shape[0], x_offset:x_offset+patch.shape[1]] = patch
         mask = np.zeros(shape=img.shape)
-        mask[y_offset:y_offset+patch.shape[0], x_offset:x_offset+patch.shape[1]] = 1
-        bounding_box = (y_offset, patch.shape[0], x_offset, patch.shape[1])
-        return img, mask, bounding_box
+        boxes = []
+        prev = (0, 0)
+        gen = gencoordinates(img.shape[0], img.shape[1])
+        for i in range(count):
+            rnd = random.choice([x for x in range(100)])
+            x_offset = rnd + patch.shape[0]
+            y_offset = rnd + patch.shape[1]
+            x_offset += prev[0]
+            y_offset += prev[1]
+            if y_offset < patch.shape[1]:
+                y_offset = patch.shape[1]
+            if x_offset < patch.shape[0]:
+                x_offset = patch.shape[0]
+            img[y_offset:y_offset+patch.shape[0], x_offset:x_offset+patch.shape[1]] = patch
+            mask[y_offset:y_offset+patch.shape[0], x_offset:x_offset+patch.shape[1]] = 1
+            boxes.append((y_offset, patch.shape[0], x_offset, patch.shape[1]))
+            prev = (x_offset, y_offset)
+        return img, mask, boxes
