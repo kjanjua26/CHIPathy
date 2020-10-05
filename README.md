@@ -36,3 +36,14 @@ python efficientdet/efficientdet_test.py <path_to_img> <path_to_trained_weights>
 ```
 
 ### Results
+
+<table style="width:100%">
+  <tr>
+    <th>Results</th>
+    <th>Mask</th>
+  </tr>
+  <tr>
+    <td><img src="efficientdet/imgs/00005_IDRiD_63_out.jpg" width="200" height="200" /></td>
+     <td><img src="efficientdet/imgs/00005_IDRiD_63_mask.tif" width="200" height="200" /></td>
+  </tr>
+</table>
