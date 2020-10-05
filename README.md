@@ -44,6 +44,6 @@ python efficientdet/efficientdet_test.py <path_to_img> <path_to_trained_weights>
   </tr>
   <tr>
     <td><img src="efficientdet/imgs/00005_IDRiD_63_out.jpg" width="200" height="200" /></td>
-     <td><img src="efficientdet/imgs/00005_IDRiD_63_mask.tif" width="200" height="200" /></td>
+     <td><img src="efficientdet/imgs/00005_IDRiD_63_mask.png" width="200" height="200" /></td>
   </tr>
 </table>
