@@ -4,4 +4,4 @@ Exploiting RPNs to work out possible regions before passing to a base object det
 
 ### Architecture Diagram
 
-<img src="img/arch.png" width="200" height="700" />
+<img src="img/arch.png" width="700" height="300" />
