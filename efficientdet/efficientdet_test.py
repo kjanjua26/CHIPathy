@@ -4,6 +4,7 @@
 Simple Inference Script of EfficientDet-Pytorch
 """
 
+import os
 import sys
 import time
 import torch
@@ -19,7 +20,7 @@ from utils.utils import preprocess, invert_affine, postprocess, STANDARD_COLORS,
 
 compound_coef = 0
 force_input_size = 256  # set None to use default size
-img_path = sys.argv[1]
+img_path = sys.argv[2]
 
 # replace this part with your project's anchor config
 anchor_ratios = [(1.0, 1.0), (1.4, 0.7), (0.7, 1.4)]
@@ -28,7 +29,7 @@ anchor_scales = [2 ** 0, 2 ** (1.0 / 3.0), 2 ** (2.0 / 3.0)]
 threshold = 0.2
 iou_threshold = 0.2
 
-use_cuda = True
+use_cuda = False
 use_float16 = False
 cudnn.fastest = True
 cudnn.benchmark = True
@@ -45,6 +46,28 @@ cudnn.benchmark = True
 
 obj_list = ['Haemorrhages', 'Hard_Exudates', 'Microaneurysms', 'Optic_Disc', 'Soft_Exudates']
 
+def display(preds, imgs, imshow=True, imwrite=False):
+    for i in range(len(imgs)):
+        if len(preds[i]['rois']) == 0:
+            continue
+
+        imgs[i] = imgs[i].copy()
+
+        for j in range(len(preds[i]['rois'])):
+            x1, y1, x2, y2 = preds[i]['rois'][j].astype(np.int)
+            obj = obj_list[preds[i]['class_ids'][j]]
+            score = float(preds[i]['scores'][j])
+            print(obj)
+            plot_one_box(imgs[i], [x1, y1, x2, y2], label=obj,score=score,color=color_list[get_index_label(obj, obj_list)])
+
+
+        if imshow:
+            cv2.imshow('img', imgs[i])
+            cv2.waitKey(0)
+
+        if imwrite:
+            cv2.imwrite(os.path.basename(img_path), imgs[i])
+            
 
 color_list = standard_to_bgr(STANDARD_COLORS)
 # tf bilinear interpolation is different from any other's, just make do
@@ -61,7 +84,7 @@ x = x.to(torch.float32 if not use_float16 else torch.float16).permute(0, 3, 1, 2
 
 model = EfficientDetBackbone(compound_coef=compound_coef, num_classes=len(obj_list),
                              ratios=anchor_ratios, scales=anchor_scales)
-model.load_state_dict(torch.load(sys.argv[2], map_location='cpu'), strict=False)
+model.load_state_dict(torch.load(sys.argv[1], map_location='cpu'), strict=False)
 model.requires_grad_(False)
 model.eval()
 
@@ -81,50 +104,19 @@ with torch.no_grad():
                       regressBoxes, clipBoxes,
                       threshold, iou_threshold)
 
-def display(preds, imgs, imshow=True, imwrite=False):
-    for i in range(len(imgs)):
-        if len(preds[i]['rois']) == 0:
-            continue
+    out = invert_affine(framed_metas, out)
+    print(out)
+    display(out, ori_imgs, imshow=False, imwrite=True)
 
-        imgs[i] = imgs[i].copy()
+# print('running test...')
+# with torch.no_grad():
+#     _, regression, classification, anchors = model(x)
 
-        for j in range(len(preds[i]['rois'])):
-            x1, y1, x2, y2 = preds[i]['rois'][j].astype(np.int)
-            obj = obj_list[preds[i]['class_ids'][j]]
-            score = float(preds[i]['scores'][j])
-            plot_one_box(imgs[i], [x1, y1, x2, y2], label=obj,score=score,color=color_list[get_index_label(obj, obj_list)])
-
-
-        if imshow:
-            cv2.imshow('img', imgs[i])
-            cv2.waitKey(0)
-
-        if imwrite:
-            cv2.imwrite(f'img_inferred_d{compound_coef}_this_repo_{i}.jpg', imgs[i])
-
-
-out = invert_affine(framed_metas, out)
-print(out)
-display(out, ori_imgs, imshow=False, imwrite=True)
-
-print('running speed test...')
-with torch.no_grad():
-    print('test1: model inferring and postprocessing')
-    print('inferring image for 10 times...')
-    t1 = time.time()
-    for _ in range(10):
-        _, regression, classification, anchors = model(x)
-
-        out = postprocess(x,
-                          anchors, regression, classification,
-                          regressBoxes, clipBoxes,
-                          threshold, iou_threshold)
-        out = invert_affine(framed_metas, out)
-
-    t2 = time.time()
-    tact_time = (t2 - t1) / 10
- 
-    print(f'{tact_time} seconds, {1 / tact_time} FPS, @batch_size 1')
+#     out = postprocess(x,
+#                         anchors, regression, classification,
+#                         regressBoxes, clipBoxes,
+#                         threshold, iou_threshold)
+#     out = invert_affine(framed_metas, out)
 
     # uncomment this if you want a extreme fps test
     # print('test2: model inferring only')
