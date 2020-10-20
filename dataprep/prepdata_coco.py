@@ -24,6 +24,8 @@ if __name__ == "__main__":
                             help="comma separated list of directory names (not path) to skip\ne.g., --skip class_1,class_2.")
     parser.add_argument('--thresh', '-t', type=int, default=20,
                             help='bounding box threshold')
+    parser.add_argument('--base', '-b', type=str, default='',
+                            help='directory to containing images paths in CSV')
 
     args = parser.parse_args()
 
@@ -108,7 +110,7 @@ if __name__ == "__main__":
                                                 "id": _id*len(images) + i})
     
         if count:
-            image = cv2.imread(img)
+            image = cv2.imread(os.path.join(args.base, img))
             # Adding image to JSON
             annotations["images"].append({
                 "license": 4,
