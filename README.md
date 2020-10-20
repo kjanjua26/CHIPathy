@@ -15,13 +15,15 @@ Diabetic Retinopathy Detection using PatchCNN Networks.
 3. Divide the masks and images into patches of size 64x64, run ```dataprep/patches.py``` to get the results.
 4. Convert the segmentation masks to bounding boxes. To obtain the results run ```dataprep/masks2boxes.py``` file.
 5. Convert these bounding boxes to different formats as required by the model using specific conversion scripts. e.g., for YOLO use ```dataprep/prepdata_yolo.py``` file.
-6. To prepare the data (along with annotations) for EfficientDet, run the file ```dataprep/prepdata_coco.py``` since the data is fed into EfficientDet in coco's format. This will prepare the necessary ```.json``` files required to train the network. 
+6. To prepare the data (along with annotations) for EfficientDet, run the file ```dataprep/prepdata_coco.py``` since the data is fed into EfficientDet in coco's format. This will prepare the necessary ```.json``` files required to train the network.
+7. In case some model requires VOC annotations, use [coco2voc converter][3].
+
 
 ## EfficientDet
 
 ### Training
 
-To train the efficientdet, follow the training code provided here: <a href="https://github.com/zylo117/Yet-Another-EfficientDet-Pytorch">EfficientDet Repo</a>. The prepared dataset config is given in the efficientdet folder as a ```.yaml``` file.
+To train the efficientdet, follow the training code provided here: [EfficientDet Repo][1]. The prepared dataset config is given in the efficientdet folder as a ```.yaml``` file.
 The dataset config yaml can be accessed from this path: ```efficientdet/images.yaml```
 
 To know the entire training command with params, run help on the train.py as follows.
@@ -31,7 +33,7 @@ python train.py -h
 
 ### Inference
 
-The trained network weights of model d0 can be downloaded for iDRiD dataset from <a href="https://drive.google.com/file/d/1T12drFxe0-r_TxhThFxI3vKgJh4MaTqN/view?usp=sharing">HERE</a>
+The trained network weights of model d0 can be downloaded for iDRiD dataset from [HERE][2]
 
 To run the inference, run the following command:
 ```
@@ -50,3 +52,10 @@ python efficientdet/efficientdet_test.py <path_to_img> <path_to_trained_weights>
      <td><img src="efficientdet/imgs/00005_IDRiD_63_mask.png" width="200" height="200" /></td>
   </tr>
 </table>
+
+
+
+<!-- Links -->
+[1]: https://github.com/zylo117/Yet-Another-EfficientDet-Pytorch
+[2]: https://drive.google.com/file/d/1T12drFxe0-r_TxhThFxI3vKgJh4MaTqN/view?usp=sharing
+[3]: https://github.com/alicranck/coco2voc
